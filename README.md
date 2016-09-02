@@ -5,8 +5,8 @@ Population and Adaptation Genomics Workshop, Turkey, 2016
 
 Slides can be found [here](https://github.com/mfumagalli/Ankara/tree/master/Slides).
 
-The data has been already downloaded and it is provided in `/truba/home/egitim/Copenhagen/Data`.
-These instructions, including all relevant files and scripts, can be found at `/truba/home/egitim/Copenhagen`.
+The data has been already downloaded and it is provided in `/truba/home/egitim/Data`.
+These instructions, including all relevant files and scripts, can be found at `/truba/home/egitim/Ankara`.
 
 ## Data
 
@@ -26,20 +26,18 @@ cd Ex
 ```
 Please set the path for all programs and data we will be using.
 ```
-# mandatory
 ANGSD=/truba/home/egitim/bin/angsd
 NGSTOOLS=/truba/home/egitim/bin/ngsTools
 NGSDIST=$NGSTOOLS/ngsDist
 MS=/truba/home/egitim/bin/msHOT/ms
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
-# optional
 NGSADMIX=/truba/home/egitim/bin/NGSadmix
 FASTME=/truba/home/egitim/bin/fastme-2.1.5/binaries/fastme-2.1.5-linux64
 ```
 You also need to provide the location of data and sequences:
 ```
-DIR=/truba/home/egitim/Copenhagen
-DATA=$DIR/Data
+DIR=/truba/home/egitim/Ankara
+DATA=/truba/home/egitim/Data
 REF=$DATA/ref.fa.gz
 ANC=$DATA/anc.fa.gz
 ```
@@ -142,14 +140,6 @@ Write the paper!
 ## Credits
 
 Some materials have been borrowed (and then adapted) from [Thorfinn Korneliussen](http://scholar.google.co.uk/citations?user=-YNWF4AAAAAJ&hl=en), [Anders Albrechtsen](http://popgen.dk/albrecht/web/WelcomePage.html), [Tyler Linderoth](http://scholar.google.com/citations?user=dTuxmzkAAAAJ&hl=en), [Filipe G. Vieira](http://scholar.google.com/citations?user=gvZmPNQAAAAJ&hl=en), [Dean Ousby](https://www.linkedin.com/in/deanousby), [Javier Mendoza](https://www.ucl.ac.uk/candela/candela-news/new-fellow-javiermendoza) and possibly many more. Many thanks to [Ryan Waples](http://www1.bio.ku.dk/english/Staff/?pure=en/persons/545443) for feedbacks.
-
-
-
-
-
-
-
-
 
 
 
