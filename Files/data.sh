@@ -1,6 +1,8 @@
 
 ## Pipeline to download and process the data to be used for this workshop
 
+IMPORTANT NOTE: if you are a student DO NOT RUN these commands!!!
+
 # set path
 # SAMTOOLS=/data/data/Software/samtools-1.3/samtools
 SAMTOOLS=samtools

@@ -11,7 +11,7 @@ These instructions, including all relevant files and scripts, can be found at `/
 ## Data
 
 As an illustration, we will use 80 BAM files of human samples (of African, European, East Asian, and Native American descent), a reference genome, and putative ancestral sequence.
-*To make things more interesting, we have downsampled our data to an average mean depth of 2X!*.
+*To make things more interesting, we have downsampled our data to an average mean depth of 2X!*
 
 We will also use VCF files for 120 individuals from the same populations.
 The human data represents a small genomic region (1MB on chromosome 2) extracted from the 1000 Genomes Project data set.
@@ -33,6 +33,8 @@ MS=/truba/home/egitim/bin/msHOT/ms
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
 NGSADMIX=/truba/home/egitim/bin/NGSadmix
 FASTME=/truba/home/egitim/bin/fastme-2.1.5/binaries/fastme-2.1.5-linux64
+SAMTOOLS=/truba/home/egitim/bin/samtools-1.3.1/samtools
+BGZIP=/truba/home/egitim/bin/htslib-1.3.1/bgzip
 ```
 You also need to provide the location of data and sequences:
 ```
@@ -40,6 +42,10 @@ DIR=/truba/home/egitim/Ankara
 DATA=/truba/home/egitim/Data
 REF=$DATA/ref.fa.gz
 ANC=$DATA/anc.fa.gz
+```
+You can check that it worked by typing:
+```
+echo $REF
 ```
 Finally, create a folder where you will put all the results and some temporary data.
 ```

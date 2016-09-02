@@ -140,12 +140,18 @@ Also, you may want to remove reads with low mapping quality and sites with low q
 Under these circumnstances, the assignment of individual genotypes and SNPs is problematic, and can lead to errors. 
 
 However, it is necessary to know the overall distribution of per-site depth, in order to avoid filtering too many (or few) sites.
-
 To make things faster, we are using only 20 samples from European samples (TSI, Italians, of course...).
 
+**IMPORTANT NOTE**
+Be aware that you need to create a bash file to run long commands.
+You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`) and then run it like `#SBATCH --reservasyon=egitim tmp.sh`.
+Moreover, when you create a PDF file on the cluster and want to open it, you have to transfer it to your local machine. For instance, from your local machine you should type something like `scp /truba/home/egitim/Students/Student1/Ex/Results/tmp.pdf .` and then you can open it by clicking on it or by typing `open tmp.pdf`. 
+
 We first derive the distribution of quality scores and depth on our data set using ```-doQsDist 1 -doDepth 1```.
+Copy and paste this command into a bash file and follow the instructions previously reported.
 ```
-$ANGSD/angsd -b $DATA/TSI.bamlist -ref $REF -out Results/ALL.qc \
+POP=TSI # change population if you wish so
+$ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL.qc \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -doQsDist 1 -doDepth 1 -doCounts 1 -maxDepth 200 -minQ 0 &> /dev/null
 ```
@@ -168,7 +174,7 @@ ls Results/*
 less -S Results/ALL.qc.qs
 # counts of per-sample depth
 less -S Results/ALL.qc.depthSample 
-wc -l Results/ALL.qc.depthSample # 80
+wc -l Results/ALL.qc.depthSample # how many samples do we have? 20
 # counts of global depth
 less -S Results/ALL.qc.depthGlobal 
 ```
@@ -177,13 +183,18 @@ It is convenient to compute the percentiles of these distributions (and visualiz
 ```
 Rscript $DIR/Scripts/plotQC.R Results/ALL.qc 2> /dev/null
 ```
-Have a look at the output files:
+Have a look at the output files.
 ```
 less -S Results/ALL.qc.info
-evince Results/ALL.qc.pdf
+```
+If you want to open the PDF plot, transfer it (via scp) on your local machine and type:
+```
+open Results/ALL.qc.pdf
 ``` 
 
+**QUESTION**
 Which values would you choose as sensible thresholds on quality score and global depth (min and max)?
+
 We may also want to remove sites where half of the individual have no data. This is achieved by the -minInd option.
 A possible command line would contain the following filtering:
 ```
@@ -288,9 +299,10 @@ A description of these different implementation can be found [here](http://www.p
 The GATK model refers to the first GATK paper, SAMtools is somehow more sophisticated (non-independence of errors), SOAPsnp requires a reference sequence for recalibration of quality scores, SYK is error-type specific.
 For most applications and data, GATK and SAMtools models should give similar results.
 
-Therefore a possible command line to estimate allele frequencies might be (this may take 1 min to run):
+Therefore a possible command line to estimate allele frequencies might be (remember to copy-and-paste this command into a bash file!):
 ```
-$ANGSD/angsd -b $DATA/TSI.bamlist -ref $REF -out Results/ALL \
+POP=TSI
+$ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
         -GL 1 -doMajorMinor 4 -doMaf 1 -skipTriallelic 1 &> /dev/null
@@ -339,17 +351,18 @@ There are two main ways to call SNPs using ANGSD with these options:
 ```
 Therefore we can consider assigning as SNPs sites whose estimated allele frequency is above a certain threhsold (e.g. the frequency of a singleton) or whose probability of being variable is above a specified value.
 
+**QUICK EXERCISE**
 As an illustration, let us call SNPs by computing:
  - genotype likelihoods using GATK method;
  - major and minor alleles inferred from genotype likelihoods;
  - frequency from known major allele but unknown minor;
  - SNPs as those having MAF=>0.01.
+Write down the above command by yourself...
 
-Try to write down this command by yourself...
-
-Here is the solution (this may take a couple of minutes to run, be patient...):
+Here is the solution (again copy-and-paste on a bash file):
 ```
-$ANGSD/angsd -b $DATA/TSI.bamlist -ref $REF -out Results/ALL \
+POP=TSI
+$ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 \
         -GL 2 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1  \
@@ -391,7 +404,8 @@ Try varying the cutoff for SNP calling and record how many sites are predicted t
 Identify which sites are not predicted to be variable anymore with a more stringent cutoff (e.g. between a pair of scenario), and plot their allele frequencies.
 
 ```
-# iterate over some cutoffs (you can change these)
+# iterate over some cutoffs (you can change these if you wish, but remember to copy and paste this command on a bash file)
+> Results/nr_snps.txt
 for PV in 0.05 1e-2 1e-4 1e-6
 do
         if [ $PV == 0.05 ]; then echo SNP_pval NR_SNPs; fi
@@ -400,11 +414,14 @@ do
 		-minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
 		-GL 1 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
 		-SNP_pval $PV &> /dev/null
-	echo $PV `zcat Results/ALL.$PV.mafs.gz | tail -n+2 | wc -l`
+	echo $PV `zcat Results/ALL.$PV.mafs.gz | tail -n+2 | wc -l` >> Results/nr_snps.txt
 done
 ```
 
 A possible output is (your numbers may be different):
+```
+cat Results/nr_snps.txt
+```
 ```
 SNP_pval NR_SNPs
 0.05 5848
@@ -417,8 +434,11 @@ Which sites differ from 0.05 and 0.01? What is their frequency?
 This script will also print out the first 20 discordant sites (pK.EM is the p-value for the SNP calling test).
 ```
 Rscript -e 'mafs1=read.table(gzfile("Results/ALL.1e-2.mafs.gz"), he=T, strings=F); mafs5=read.table(gzfile("Results/ALL.0.05.mafs.gz"), header=T, stringsAsFact=F); mafs5[!(mafs5[,2] %in% mafs1[,2]),][1:20,]; pdf(file="Results/diff_snpcall.pdf"); par(mfrow=c(1,2)); hist(as.numeric(mafs5[!(mafs5[,2] %in% mafs1[,2]),][,6]), main="Discordant SNPs", xlab="MAF (DAF)"); hist(as.numeric(mafs5[(mafs5[,2] %in% mafs1[,2]),][,6]), main="Concordant SNPs", xlab="MAF"); dev.off();'
+```
 
-evince Results/diff_snpcall.pdf
+Look at the resulting plot (scp to your local machine):
+```
+open Results/diff_snpcall.pdf
 ```
 
 Can you draw some conclusions from these results?
@@ -457,6 +477,7 @@ Now we can run ANGSD.
 Note that we are interested in calculating the derived allele frequency, so we need to specify a putative ancestral sequence.
 Finally, since we know analyse single populations, we can filter sites if they deviate from HWE.
 Please note that we also add PEL samples, admixed individuals from Peru.
+Again, copy and paste this command on a bash file.
 ```
 for POP in LWK TSI CHB PEL NAM
 do
@@ -475,6 +496,7 @@ You can inspect the results.
 zcat Results/LWK.mafs.gz Results/TSI.mafs.gz Results/CHB.mafs.gz Results/NAM.mafs.gz Results/PEL.mafs.gz
 ```
 
+**QUESTION**
 Can you comment on these results?
 Do you see any allele frequency differentiation in the derived state?
 
@@ -528,7 +550,8 @@ $ANGSD/angsd -doPost
 `-doPost 1` uses the estimate per-site allele frequency as a prior for genotype proportions, assuming Hardy Weinberg Equilibrium.
 When the assumption of HWE is not valid, you can use an estimate of the inbreeding coefficient, for instance calculated using [ngsF](https://github.com/fgvieira/ngsF).
 
-A typical command for genotype calling assuming HWE is (assuming we analyse our PEL samples):
+A typical command for genotype calling assuming HWE is the following one (assuming we analyse our PEL samples).
+Again copy-and-paste on a bash file.
 ```
 $ANGSD/angsd -b $DATA/PEL.bamlist -ref $REF -out Results/PEL \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
@@ -583,7 +606,7 @@ We will show later how to accurately estimate summary statistics with low-depth 
 Back to our example of functional variants in EDAR, we want to assign individual genotypes by first computing genotype posterior probabilities for all samples.
 Finally we will calculate allele frequencies based on assigned genotypes.
 
-As previously done, let us perform a genotype calling in ANGSD:
+As previously done, let us perform a genotype calling in ANGSD (remember to copy and paste it into a bash file):
 ```
 for POP in LWK TSI CHB NAM PEL
 do
@@ -613,7 +636,7 @@ We have a lot of missing data.
 Try to calculate allele frequencies in PEL by using a HWE-prior and comment on the results (e.g. which are the genotypic states more difficult to assign?).
 
 ```
-# with HWE-prior
+# with HWE-prior (copy and paste to a bash file)
 for POP in LWK TSI CHB NAM PEL
 do
 	echo $POP
