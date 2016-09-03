@@ -111,7 +111,6 @@ ls
 * Maximum likelihood and Bayesian estimation
 * Genotype likelihoods
 * Allele frequencies, SNPs and genotypes calling
-* Brief notes on experimental design
 * Imputation
 
 #### [Practical](Files/day1.md)
@@ -125,6 +124,7 @@ ls
 
 * Population structure and site frequency spectrum
 * Estimation summary statistics from low-depth sequencing data
+* Brief notes on experimental design
 
 #### [Practical](Files/day2.md)
 

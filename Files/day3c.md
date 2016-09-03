@@ -199,7 +199,7 @@ Another useful tool for visualising haplotypes is [PopArt](http://popart.otago.a
 
 ------------------------
 
-[HOME](https://github.com/mfumagalli/Copenhagen)
+[HOME](https://github.com/mfumagalli/Ankara)
 
 
 

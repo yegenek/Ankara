@@ -104,7 +104,7 @@ Next we are going to investigate the patterns of haplotype diversity around the 
 
 ------------------------
 
-[HOME](https://github.com/mfumagalli/Copenhagen)
+[HOME](https://github.com/mfumagalli/Ankara)
 
 
 

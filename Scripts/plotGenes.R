@@ -20,7 +20,7 @@ plotGenes<-function(chr,min.pos,max.pos){
   cexlab=1.5
   adj = 0
   
-  dat<-read.table("/home/matteo/Copenhagen/Files/refGene.txt.gz",as.is=T,head=T,comment.char="")
+  dat<-read.table("/truba/home/egitim/Ankara/Files/refGene.txt.gz",as.is=T,head=T,comment.char="")
   xx2 = dat[dat[,"chrom"]==paste("chr",chr,sep="") & dat[,"cdsStart"]<max.pos*1e6 & dat[,"cdsEnd"] >min.pos*1e6,]
   
   start = xx2$txStart
@@ -59,3 +59,4 @@ plotGenes<-function(chr,min.pos,max.pos){
   
   par(mar=defaultPar$mar)
 }
+
