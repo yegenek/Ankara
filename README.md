@@ -17,6 +17,49 @@ We will also use VCF files for 120 individuals from the same populations.
 The human data represents a small genomic region (1MB on chromosome 2) extracted from the 1000 Genomes Project data set.
 More information on this project can be found [here](http://www.1000genomes.org/), including their last publication available [here](http://www.nature.com/nature/journal/v526/n7571/full/nature15393.html).
 
+## Case study
+
+*MOTIVATION*
+
+Detecting signatures of natural selection in the genome has the twofold meaning of (i) understanding which adaptive processes shaped genetic variation and (ii) identifying putative functional variants.
+In case of humans, biological pathways enriched with selection signatures include pigmentation, immune-system regulation and metabolic processes.
+The latter may be related to human adaptation to different diet regimes, depending on local food availability (e.g. the case of lactase persistence in dairy-practicing populations).
+
+The human Ectodysplasin A receptor gene, or EDAR, is part of the EDA signalling pathway which specifies prenatally the location, size and shape of ectodermal appendages (such as hair follicles, teeth and glands).
+EDAR is a textbook example of positive selection in East Asians (Sabeti et al. 2007 Nature) with tested phenotypic effects (using transgenic mice).
+
+Recently, a genome-wide association study found the same functional variant in EDAR associated to several human facial traits (ear shape, chin protusion, ...) in Native American populations (Adhikari et al. Nat Commun 2016).
+
+*HYPOTHESIS*
+
+- Is the functional allele in East Asian at high frequency in other human populations (e.g. Native Americans)?
+- Can we identify signatures of natural selection on EDAR in Native Americans?
+- Is selection targeting the same functional variant?
+
+*CHALLENGES*
+- Admixed population
+- Low-depth sequencing data
+- ...
+
+*PLAN OF ACTION*
+
+Goal day 1:
+
+- Estimate allele frequencies for tested variant for African, European, East Asian and Native American samples from low-depth sequencing data
+
+Goal day 2:
+
+- Investigate population structure of American samples related to Europeans and Africans
+- Estimate the site frequency spectrum for each population 
+
+Goal day 3:
+
+- Perfom a sliding windows scan based on allele frequency differentiation
+- Assess statistical significance of selection signatures through simulations
+- Test for extended haplotype homozygosity on high-depth sequencing data
+
+Write the paper!
+
 ## Preparation
 
 First create a directory where you will be working on.
@@ -58,49 +101,6 @@ pwd
 ls
 ```
 
-## Case study
-
-*MOTIVATION*
-
-Detecting signatures of natural selection in the genome has the twofold meaning of (i) understanding which adaptive processes shaped genetic variation and (ii) identifying putative functional variants.
-In case of humans, biological pathways enriched with selection signatures include pigmentation, immune-system regulation and metabolic processes.
-The latter may be related to human adaptation to different diet regimes, depending on local food availability (e.g. the case of lactase persistence in dairy-practicing populations).
-
-The human Ectodysplasin A receptor gene, or EDAR, is part of the EDA signalling pathway which specifies prenatally the location, size and shape of ectodermal appendages (such as hair follicles, teeth and glands).
-EDAR is a textbook example of positive selection in East Asians (Sabeti et al. 2007 Nature) with tested phenotypic effects (using transgenic mice).
-
-Recently, a genome-wide association study found the same functional variant in EDAR associated to several human facial traits (ear shape, chin protusion, ...) in Native American populations (Adhikari et al. Nat Commun 2016).
-
-*HYPOTHESIS*
-
-- Is the functional allele in East Asian at high frequency in other human populations (e.g. Native Americans)?
-- Can we identify signatures of natural selection on EDAR in Native Americans?
-- Is selection targeting the same functional variant?
-
-*CHALLENGES*
-- Admixed population
-- Low-depth sequencing data
-- ...
-
-*PLAN OF ACTION*
-
-Goal day 1:
-
-- Estimate allele frequencies for tested variant for African, European, East Asian and Native American samples from low-depth sequencing data
-
-Goal day 2:
-
-- Investigate population structure of American samples related to Europeans and Africans
-- Select individuals with high Native American ancestry
-
-Goal day 3:
-
-- Perfom a sliding windows scan based on allele frequency differentiation
-- Assess statistical significance of selection signatures through simulations
-- Test for extended haplotype homozygosity on high-depth sequencing data
-
-Write the paper!
-
 ## Agenda
 
 ### Monday
@@ -123,7 +123,14 @@ Write the paper!
 
 ### Tuesday
 
-...
+* Population structure and site frequency spectrum
+* Estimation summary statistics from low-depth sequencing data
+
+#### [Practical](Files/day2.md)
+
+* PCA from low-depth sequencing data
+* SFS estimation and bias introduced by low-quality data
+* Example: population structure and frequency variation in modern populations
 
 ### Wednesday
 
@@ -132,14 +139,13 @@ Write the paper!
 * The effect of selection on the genome
 * Methods to detect selection signals
 * The problem of assessing significance
-* Bias introduced by NGS data
 * Summary statistics from low-depth data
 
 #### Practical
 
-* Selection scan based on genetic [differentiation](Files/day2a.md) from low-depth data
-* Assessing significance through [simulations](Files/day2b.md)
-* Selection test based on [haplotype](Files/day2c.md) diversity
+* Selection scan based on genetic [differentiation](Files/day3a.md) from low-depth data
+* Assessing significance through [simulations](Files/day3b.md)
+* Selection test based on [haplotype](Files/day3c.md) diversity
 * Example: detection of natural selection from low-depth sequencing data and haplotype data: the case of EDAR genetic variation in Native Americans
 
 
