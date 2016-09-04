@@ -148,15 +148,30 @@ You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`) a
 Moreover, when you create a PDF file on the cluster and want to open it, you have to transfer it to your local machine. For instance, from your local machine you should type something like `scp /truba/home/egitim/Students/Student1/Ex/Results/tmp.pdf .` and then you can open it by clicking on it or by typing `open tmp.pdf`. 
 
 We first derive the distribution of quality scores and depth on our data set using ```-doQsDist 1 -doDepth 1```.
-Copy and paste this command into a bash file and follow the instructions previously reported.
+Copy and paste this command into a bash file (e.g. `tmp.sh`) and follow the instructions previously reported.
 ```
-POP=TSI # change population if you wish so
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+# specify the population label
+POP=TSI # change it if you wish so
+
 $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL.qc \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -doQsDist 1 -doDepth 1 -doCounts 1 -maxDepth 200 -minQ 0 &> /dev/null
 ```
+and then run it like:
+```
+sh tmp.sh
+```
 As an illustration here, ```-maxDepth 200``` corresponds to a per-sample average depth of 10.
-This option means that all sites with depth equal or greater than 800 will be binned together.
+This option means that all sites with depth equal or greater than 200 will be binned together.
 
 Have a look at the files generated:
 ```
@@ -301,11 +316,23 @@ For most applications and data, GATK and SAMtools models should give similar res
 
 Therefore a possible command line to estimate allele frequencies might be (remember to copy-and-paste this command into a bash file!):
 ```
-POP=TSI
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+# specify the population label
+POP=TSI # change it if you wish so
+
 $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
         -GL 1 -doMajorMinor 4 -doMaf 1 -skipTriallelic 1 &> /dev/null
+
 ```
 where we specify:
 * -GL 1: genotype likelihood model as in SAMtools
@@ -339,7 +366,7 @@ chromo	position	major	minor	ref	knownEM	nInd
 where `knownEM` specifies the algorithm used to estimate the allele frequency which is given under that column.
 Please note that this refers to the allele frequency of the allele labelled as `minor`.
 The columns are: chromosome, position, major allele, minor allele, reference allele, allele frequency, p-value for SNP calling (if -SNP-pval was called), number of individuals with data.
-The last column gives the number of samples with data (you can see that this never lower than 40 given our filtering).
+The last column gives the number of samples with data (you can see that this never lower than 10 given our filtering).
 
 You can notice that many sites have low allele frequency, probably reflecting the fact that that site is monomorphic.
 We may be interested in looking at allele frequencies only for sites that are actually variable in our sample.
@@ -352,21 +379,37 @@ There are two main ways to call SNPs using ANGSD with these options:
 Therefore we can consider assigning as SNPs sites whose estimated allele frequency is above a certain threhsold (e.g. the frequency of a singleton) or whose probability of being variable is above a specified value.
 
 **QUICK EXERCISE**
+
 As an illustration, let us call SNPs by computing:
  - genotype likelihoods using GATK method;
  - major and minor alleles inferred from genotype likelihoods;
  - frequency from known major allele but unknown minor;
  - SNPs as those having MAF=>0.01.
+
 Write down the above command by yourself...
+
+...thinking...
 
 Here is the solution (again copy-and-paste on a bash file):
 ```
-POP=TSI
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+# specify the population label
+POP=TSI # change it if you wish so
+
 $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 \
         -GL 2 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1  \
         -minMaf 0.01 &> /dev/null
+
 ```
 
 You can have a look at the results:
@@ -402,9 +445,20 @@ However, various cutoffs and a dedicated filtering should be perform to assess r
 
 Try varying the cutoff for SNP calling and record how many sites are predicted to be variable for each scenario.
 Identify which sites are not predicted to be variable anymore with a more stringent cutoff (e.g. between a pair of scenario), and plot their allele frequencies.
-
+You can change these cutoffs but remeber to copy and paste it on a bash file.
 ```
-# iterate over some cutoffs (you can change these if you wish, but remember to copy and paste this command on a bash file)
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+# specify the population label
+POP=TSI # change it if you wish so
+
 > Results/nr_snps.txt
 for PV in 0.05 1e-2 1e-4 1e-6
 do
@@ -416,6 +470,7 @@ do
 		-SNP_pval $PV &> /dev/null
 	echo $PV `zcat Results/ALL.$PV.mafs.gz | tail -n+2 | wc -l` >> Results/nr_snps.txt
 done
+
 ```
 
 A possible output is (your numbers may be different):
@@ -479,6 +534,16 @@ Finally, since we know analyse single populations, we can filter sites if they d
 Please note that we also add PEL samples, admixed individuals from Peru.
 Again, copy and paste this command on a bash file.
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
+
 for POP in LWK TSI CHB PEL NAM
 do
         echo $POP
@@ -488,6 +553,7 @@ do
                 -GL 1 -doMajorMinor 5 -doMaf 1 -skipTriallelic 1 \
                 -sites snp.txt &> /dev/null
 done
+
 ```
 An assessment of the deviation from HWE will be print out in files with extension `.hwe.gz`.
 
@@ -553,12 +619,25 @@ When the assumption of HWE is not valid, you can use an estimate of the inbreedi
 A typical command for genotype calling assuming HWE is the following one (assuming we analyse our PEL samples).
 Again copy-and-paste on a bash file.
 ```
-$ANGSD/angsd -b $DATA/PEL.bamlist -ref $REF -out Results/PEL \
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+# specify the population label
+POP=PEL # change it if you wish so
+
+$ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/$POP \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 	-minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 15 -setMaxDepth 100 -doCounts 1 \
 	-GL 1 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
 	-SNP_pval 1e-3 \
 	-doGeno 3 -doPost 1 -postCutoff 0 &> /dev/null
+
 ```
 
 Have a look at the output file:
@@ -576,12 +655,25 @@ Why is that?
 You can control how to set missing genotype when their confidence is low with `-postCutoff`.
 For instance, we can set as missing genotypes when their (highest) genotype posterior probability is below 0.95:
 ```
-$ANGSD/angsd -b $DATA/PEL.bamlist -ref $REF -out Results/PEL \
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+# specify the population label
+POP=PEL
+
+$ANGSD/angsd -b $DATA/$POP.bamlist -ref $POP -out Results/PEL \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 	-minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
 	-GL 1 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
 	-SNP_pval 1e-3 \
 	-doGeno 3 -doPost 1 -postCutoff 0.95 &> /dev/null
+
 ```
 
 How many sites do we have in total?
@@ -608,6 +700,16 @@ Finally we will calculate allele frequencies based on assigned genotypes.
 
 As previously done, let us perform a genotype calling in ANGSD (remember to copy and paste it into a bash file):
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
+
 for POP in LWK TSI CHB NAM PEL
 do
         echo $POP
@@ -618,6 +720,7 @@ do
 		-doGeno 3 -doPost 2 -postCutoff 0.50 \
                 -sites snp.txt &> /dev/null
 done
+
 ```
 Note that, as an illustration, here we used a uniform prior (not HWE) with `-doPost 2` with a threshold for setting missing genotypes to 0.50.
 
@@ -634,9 +737,17 @@ What is the derived allele frequency for each population?
 
 We have a lot of missing data.
 Try to calculate allele frequencies in PEL by using a HWE-prior and comment on the results (e.g. which are the genotypic states more difficult to assign?).
-
+We assume a HWE-based prior (copy and paste to a bash file):
 ```
-# with HWE-prior (copy and paste to a bash file)
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
 for POP in LWK TSI CHB NAM PEL
 do
 	echo $POP
@@ -647,6 +758,7 @@ do
                 -doGeno 3 -doPost 1 -postCutoff 0.50 \
                 -sites snp.txt &> /dev/null
 done
+
 ```
 
 Open the files:
