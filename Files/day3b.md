@@ -87,7 +87,12 @@ We are then going to test whether our observed value falls within or outside suc
 First, let us compute some summary statistics for each replication (copy and paste to a bash file).
 ```
 #!/bin/sh
-Rscript $DIR/Scripts/ms2stats.R Results/ALL.ms > Results/ALL.ms.txt
+
+# specify where the program is
+RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
+DIR=/truba/home/egitim/Ankara
+
+$RSCRIPT $DIR/Scripts/ms2stats.R Results/ALL.ms > Results/ALL.ms.txt
 ```
 Have a look at the output file (and check how many lines we have):
 ```
@@ -99,10 +104,11 @@ Now we can plot the expected distribution of PBS under neutrality and assess whe
 Replace `OBS` with the PBS you want to test for significance and plot the neutral distribution.
 ```
 OBS=0.62
-Rscript $DIR/Scripts/plotSim.R Results/ALL.ms.txt $OBS Results/NAM.pbs.hist.pdf
+$RSCRIPT $DIR/Scripts/plotSim.R Results/ALL.ms.txt $OBS Results/NAM.pbs.hist.pdf
 ```
 Inspect the plot:
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/NAM.pbs.hist.pdf Results/.
 open Results/NAM.pbs.hist.pdf
 ```
 

@@ -39,12 +39,13 @@ The 2D-SFS between all populations and NAM are computed with:
 ANGSD=/truba/home/egitim/bin/angsd
 
 POP2=NAM
-for POP in LWK TSI CHB
+for POP in LWK TSI
 do
         echo $POP
         $ANGSD/misc/realSFS Results/$POP.saf.idx Results/$POP2.saf.idx 2> /dev/null > Results/$POP.$POP2.sfs
 done
 # we also need the comparison between LWK and TSI as we will see later 
+echo LWK TSI
 $ANGSD/misc/realSFS Results/LWK.saf.idx Results/TSI.saf.idx 2> /dev/null > Results/LWK.TSI.sfs
 ```
 
@@ -54,15 +55,16 @@ less -S Results/LWK.NAM.sfs
 ```
 You can plot it, but you need to define how many samples you have per population.
 ```
-Rscript $DIR/Scripts/plot2DSFS.R Results/LWK.NAM.sfs 20 20
+$RSCRIPT $DIR/Scripts/plot2DSFS.R Results/LWK.NAM.sfs 20 20
 ```
 Transfer it to your local machine:
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/LWK.NAM.sfs.pdf Results/.
 open Results/LWK.NAM.sfs.pdf
 ```
 
 You can even estimate SFS with higher order of magnitude.
-This command may take some time and you should skip it if not interested.
+This command will take some time and you should skip it if not interested (in other words, do not run this command while doing these exercises!).
 ```
 # $ANGSD/misc/realSFS Results/LWK.saf.idx Results/TSI.saf.idx Results/NAM.saf.idx 2> /dev/null > Results/LWK.TSI.NAM.sfs
 ```
@@ -76,23 +78,7 @@ From the sample allele frequencies likelihoods (.saf files) we can estimate PBS 
 Note that here we use the previously calculated SFS as prior information.
 Also, PEL is our target population, while CHB and TSI are reference populations.
 If not already done, you should calculate .saf.idx files for each population, as explained in the section above.
-
 Therefore, we need to use the 2D-SFS between TSI and CHB and NAM (already done).
-
-If we also assume CHB being the target population, as a possible separate analysis is (you don't have to run this if not interested):
-```
-#!/bin/sh
-
-# specify where the program is
-ANGSD=/truba/home/egitim/bin/angsd
-
-POP2=CHB
-for POP in LWK TSI
-do
-        echo $POP
-        $ANGSD/misc/realSFS Results/$POP.saf.idx Results/$POP2.saf.idx 2> /dev/null > Results/$POP.$POP2.sfs
-done
-```
 
 The 2D-SFS will be used as prior information for the joint allele frequency probabilities at each site.
 From these probabilities we will calculate the population branch statistic (PBS) using the NAM (and/or CHB) as target population and LWK and TSI as reference populations.
@@ -108,17 +94,10 @@ This can be achieved using the following commands.
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
-# NAM
 $ANGSD/misc/realSFS fst index Results/LWK.saf.idx Results/TSI.saf.idx Results/NAM.saf.idx -sfs Results/LWK.TSI.sfs -sfs Results/LWK.NAM.sfs -sfs Results/TSI.NAM.sfs -fstout Results/NAM.pbs &> /dev/null
-# CHB
-$ANGSD/misc/realSFS fst index Results/LWK.saf.idx Results/TSI.saf.idx Results/CHB.saf.idx -sfs Results/LWK.TSI.sfs -sfs Results/LWK.CHB.sfs -sfs Results/TSI.CHB.sfs -fstout Results/CHB.pbs &> /dev/null
-```
 and you can have a look at their values:
 ```
-# NAM
 $ANGSD/misc/realSFS fst print Results/NAM.pbs.fst.idx | less -S
-# CHB
-$ANGSD/misc/realSFS fst print Results/CHB.pbs.fst.idx | less -S
 ```
 where columns are: chromosome, position, (a), (a+b) values for the three FST comparisons, where FST is defined as a/(a+b).
 Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
@@ -130,18 +109,12 @@ Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
-# NAM
 $ANGSD/misc/realSFS fst stats2 Results/NAM.pbs.fst.idx -win 50000 -step 10000 > Results/NAM.pbs.txt 2> /dev/null
-# CHB
-$ANGSD/misc/realSFS fst stats2 Results/CHB.pbs.fst.idx -win 50000 -step 10000 > Results/CHB.pbs.txt 2> /dev/null
 ```
 
 Have a look at the output file:
 ```
-# NAM
 less -S Results/NAM.pbs.txt
-# CHB
-less -S Results/CHB.pbs.txt
 ```
 The header is:
 ```
@@ -154,21 +127,70 @@ We are also provided with the individual FST values.
 You can see that high values of PBS2 are indeed associated with high values of both Fst02 and Fst12 but not Fst01.
 We can plot the results along with the gene annotation.
 ```
-# NAM
 Rscript $DIR/Scripts/plotPBS.R Results/NAM.pbs.txt Results/NAM.pbs.pdf
-# CHB
-Rscript $DIR/Scripts/plotPBS.R Results/CHB.pbs.txt Results/CHB.pbs.pdf
 ```
 
 It will also print out the maximum PBS value observed as this value will be used in the next part.
 This script will also plot the PBS variation in LWK as a control comparison.
 ```
-# NAM
+scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/NAM.pbs.pdf Results/.
 open Results/NAM.pbs.pdf
-# CHB
-open Results/CHB.pbs.pdf
 ```
+
 Comment the results.
+
+------------------------
+
+**OPTIONAL EXERCISE**
+
+Calculate PBS assuming CHB being the target population.
+
+```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
+
+# estimate single-pop SFS (if not already done)
+for POP in LWK TSI CHB
+do
+        echo $POP
+        $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -anc $ANC -out Results/$POP \
+                -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
+                -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 15 -setMaxDepth 150 -doCounts 1 \
+                -GL 1 -doSaf 1 &> /dev/null
+done
+
+# estimate the 2d-sfs
+POP2=CHB
+for POP in LWK TSI
+do
+        echo $POP
+        $ANGSD/misc/realSFS Results/$POP.saf.idx Results/$POP2.saf.idx 2> /dev/null > Results/$POP.$POP2.sfs
+done
+# we also need the comparison between LWK and TSI (if not already done)
+echo LWK TSI
+$ANGSD/misc/realSFS Results/LWK.saf.idx Results/TSI.saf.idx 2> /dev/null > Results/LWK.TSI.sfs
+
+# estimate per-site FST values
+$ANGSD/misc/realSFS fst index Results/LWK.saf.idx Results/TSI.saf.idx Results/CHB.saf.idx -sfs Results/LWK.TSI.sfs -sfs Results/LWK.CHB.sfs -sfs Results/TSI.CHB.sfs -fstout Results/CHB.pbs &> /dev/null
+
+# performa sliding-windows approach
+$ANGSD/misc/realSFS fst stats2 Results/CHB.pbs.fst.idx -win 50000 -step 10000 > Results/CHB.pbs.txt 2> /dev/null
+
+# plot
+$RSCRIPT $DIR/Scripts/plotPBS.R Results/CHB.pbs.txt Results/CHB.pbs.pdf
+
+```
+Open:
+```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/CHB.pdf Results/.
+open Results/CHB.pdf
+```
 
 -------------------------
 

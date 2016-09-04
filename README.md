@@ -78,6 +78,8 @@ NGSADMIX=/truba/home/egitim/bin/NGSadmix
 FASTME=/truba/home/egitim/bin/fastme-2.1.5/binaries/fastme-2.1.5-linux64
 SAMTOOLS=/truba/home/egitim/bin/samtools-1.3.1/samtools
 BGZIP=/truba/home/egitim/bin/htslib-1.3.1/bgzip
+R=/truba/home/egitim/bin/R-3.2.2/bin/R
+RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
 ```
 You also need to provide the location of data and sequences:
 ```

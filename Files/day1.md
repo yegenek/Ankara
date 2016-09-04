@@ -196,14 +196,17 @@ less -S Results/ALL.qc.depthGlobal
 
 It is convenient to compute the percentiles of these distributions (and visualize them) in order to make an informative decision on the threshold values we will use for our filtering.
 ```
-Rscript $DIR/Scripts/plotQC.R Results/ALL.qc 2> /dev/null
+$RSCRIPT $DIR/Scripts/plotQC.R Results/ALL.qc 2> /dev/null
 ```
 Have a look at the output files.
 ```
 less -S Results/ALL.qc.info
 ```
-If you want to open the PDF plot, transfer it (via scp) on your local machine and type:
+If you want to open the PDF plot, transfer it (via scp) on your local machine.
+For instance, from your local machine, you can use:
 ```
+mkdir Results
+scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.qc.pdf Results/.
 open Results/ALL.qc.pdf
 ``` 
 
@@ -462,7 +465,7 @@ POP=TSI # change it if you wish so
 > Results/nr_snps.txt
 for PV in 0.05 1e-2 1e-4 1e-6
 do
-        if [ $PV == 0.05 ]; then echo SNP_pval NR_SNPs; fi
+        if [ $PV == 0.05 ]; then echo SNP_pval NR_SNPs >> Results/nr_snps.txt; fi
         $ANGSD/angsd -b $DATA/TSI.bamlist -ref $REF -out Results/ALL.$PV \
 		-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 		-minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
@@ -488,11 +491,12 @@ SNP_pval NR_SNPs
 Which sites differ from 0.05 and 0.01? What is their frequency?
 This script will also print out the first 20 discordant sites (pK.EM is the p-value for the SNP calling test).
 ```
-Rscript -e 'mafs1=read.table(gzfile("Results/ALL.1e-2.mafs.gz"), he=T, strings=F); mafs5=read.table(gzfile("Results/ALL.0.05.mafs.gz"), header=T, stringsAsFact=F); mafs5[!(mafs5[,2] %in% mafs1[,2]),][1:20,]; pdf(file="Results/diff_snpcall.pdf"); par(mfrow=c(1,2)); hist(as.numeric(mafs5[!(mafs5[,2] %in% mafs1[,2]),][,6]), main="Discordant SNPs", xlab="MAF (DAF)"); hist(as.numeric(mafs5[(mafs5[,2] %in% mafs1[,2]),][,6]), main="Concordant SNPs", xlab="MAF"); dev.off();'
+$RSCRIPT -e 'mafs1=read.table(gzfile("Results/ALL.1e-2.mafs.gz"), he=T, strings=F); mafs5=read.table(gzfile("Results/ALL.0.05.mafs.gz"), header=T, stringsAsFact=F); mafs5[!(mafs5[,2] %in% mafs1[,2]),][1:20,]; pdf(file="Results/diff_snpcall.pdf"); par(mfrow=c(1,2)); hist(as.numeric(mafs5[!(mafs5[,2] %in% mafs1[,2]),][,6]), main="Discordant SNPs", xlab="MAF (DAF)"); hist(as.numeric(mafs5[(mafs5[,2] %in% mafs1[,2]),][,6]), main="Concordant SNPs", xlab="MAF"); dev.off();'
 ```
 
 Look at the resulting plot (scp to your local machine):
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/diff_snpcall.pdf Results/.
 open Results/diff_snpcall.pdf
 ```
 
@@ -771,7 +775,7 @@ done
 ```
 
 For instance, you may have 0/40 in LWK and TSI, 40/40 in CHB, and 14/20=0.70 in PEL.
-Recall that we previously estimated a minor allele frequency of 0.55 in PEL without assigning individuals.
+Recall that we previously estimated a minor allele frequency of 0.55 in PEL without assigning individual genotypes.
 
 Why do we observe such a difference in the estimates?
 

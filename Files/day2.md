@@ -81,9 +81,10 @@ Note that this matrix is symmetric.
 Finally, we perform an eigenvector decomposition and plot the resulting map:
 ```
 # create a cluster-like file defining the labelling (population) for each sample
-Rscript -e 'write.table(cbind(rep(seq(1,20),4),rep(seq(1,20),4),c(rep("CHB",20),rep("LWK",20),rep("NAM",20),rep("TSI",20))), row.names=F, sep=" ", col.names=c("FID","IID","CLUSTER"), file="Results/ALL.clst", quote=F)'
+$RSCRIPT -e 'write.table(cbind(rep(seq(1,20),4),rep(seq(1,20),4),c(rep("CHB",20),rep("LWK",20),rep("NAM",20),rep("TSI",20))), row.names=F, sep=" ", col.names=c("FID","IID","CLUSTER"), file="Results/ALL.clst", quote=F)'
+
 # run and plot
-Rscript $DIR/Scripts/plotPCA_ngstools.R Results/ALL.covar Results/ALL.clst 1-2 Results/ALL.pca.pdf
+$RSCRIPT $DIR/Scripts/plotPCA_ngstools.R Results/ALL.covar Results/ALL.clst 1-2 Results/ALL.pca.pdf
 ```
 where the parameter `1-2` specifies that we are plotting only the first and second component.
 On the screen, you will see a series of numbers.
@@ -91,31 +92,71 @@ These are the percentage of explained variance for each component.
 
 Finally, you can open the produced image (scp to your local machine first):
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.pca.pdf Results/.
 open Results/ALL.pca.pdf
 ```
 
 You can inspect other components:
 ```
-Rscript $DIR/Scripts/plotPCA_ngstools.R Results/ALL.covar Results/ALL.clst 2-3 Results/ALL.pca2.pdf
+$RSCRIPT $DIR/Scripts/plotPCA_ngstools.R Results/ALL.covar Results/ALL.clst 2-3 Results/ALL.pca2.pdf
 ```
 Transfer to your local machine and open it:
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.pca2.pdf Results/.
 open Results/ALL.pca2.pdf
 ```
 
 Therefore, NAM samples appear very close to EUR but separated.
 Indeed, among all Latin American populations present in the 1000G project, Peruvians are the least admixed population.
 We can either use all these samples or compute admixture proportions in order to select a subset of putative Native American (unadmixed) samples.
-However with such limited data set we cannot refine the structure between NAM and CHB.
+However with such limited data set we cannot refine the structure between NAM and CHB (please also note that this is a particular region of the genome where NAM and CHB are very similar, as you will see later).
+
+**OPTIONAL**
+
+What happens if you do a PCA by assigning individual genotypes?
+As an extreme example, here we do not assume HWE, we standardise for genetic drift, and we do not perform a SNP calling first.
+
+```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+DIR=/truba/home/egitim/Ankara
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
+$ANGSD/angsd -b $DATA/ALL.bamlist -ref $REF -out Results/ALL2 \
+        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
+        -minMapQ 20 -minQ 20 -minInd 40 -setMinDepth 70 -setMaxDepth 200 -doCounts 1 \
+        -GL 1 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
+        -doGeno 32 -doPost 2 &> /dev/null
+
+# Unzip the results but you cannot open it since it is in binary format:
+gunzip Results/ALL2.geno.gz
+
+# specify where the program is
+NGSTOOLS=/truba/home/egitim/bin/ngsTools
+
+# specify how many sites we have
+N_SITES=`zcat Results/ALL2.mafs.gz | tail -n+2 | wc -l`
+
+$NGSTOOLS/ngsPopGen/ngsCovar -probfile Results/ALL2.geno -outfile Results/ALL2.covar -nind 80 -nsites $N_SITES -call 1 -norm 1 &> /dev/null
+
+$RSCRIPT $DIR/Scripts/plotPCA_ngstools.R Results/ALL2.covar Results/ALL.clst 1-2 Results/ALL2.pca.pdf
+
+```
+Finally, you can open the produced image (scp to your local machine first):
+```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL2.pca.pdf Results/.
+open Results/ALL2.pca.pdf
+```
+
+Do you observe any difference with that generated earlier?
+Why is that?
 
 -----------------------------------
-
-As reference, these are the labelling for each population:
-
-- LWK: Africans
-- TSI: Europeans
-- CHB: East Asians
-- NAM: Native Americans
 
 One of the most important aspect of data analysis for population genetics is the estimate of the Site Frequency Spectrum (SFS).
 SFS records the proportions of sites at different allele frequencies. It can be folded or unfolded, and the latter case implies the use of an outgroup species to define the ancestral state.
@@ -162,6 +203,7 @@ ANGSD=/truba/home/egitim/bin/angsd
 # specify where the data is
 DATA=/truba/home/egitim/Data
 REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
 
 for POP in LWK TSI CHB NAM
 do
@@ -227,10 +269,6 @@ Therefore, this command will estimate the SFS for each population separately:
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
-# specify where the data is
-DATA=/truba/home/egitim/Data
-REF=$DATA/ref.fa.gz
-
 for POP in LWK TSI CHB NAM
 do
         echo $POP
@@ -261,16 +299,17 @@ Nevertheless, these SFS should be a reasonable prior to be used for estimation o
 
 Let us plot the SFS for each pop using this simple R script.
 ```
-Rscript $DIR/Scripts/plotSFS.R Results/LWK.sfs Results/TSI.sfs Results/CHB.sfs Results/NAM.sfs
+$RSCRIPT $DIR/Scripts/plotSFS.R Results/LWK.sfs Results/TSI.sfs Results/CHB.sfs Results/NAM.sfs
 ```
 Transfer the pdf to your local machine and open it.
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/LWK_TSI_CHB_NAM.pdf Results/.
 open Results/LWK_TSI_CHB_NAM.pdf
 ```
 
 Do they behave like expected?
 Which population has more SNPs?
-Which population has a higher proportion of common (not rare) variants?
+Which population has a higher proportion of common (non rare) variants?
 
 ---------------------------------------
 
@@ -288,7 +327,7 @@ ANGSD=/truba/home/egitim/bin/angsd
 $ANGSD/misc/realSFS Results/NAM.saf.idx -bootstrap 10  2> /dev/null > Results/NAM.boots.sfs
 cat Results/NAM.boots.sfs
 ```
-This command may take some time.
+This command will take some time.
 The output file has one line for each boostrapped replicate.
 
 More examples on how to estimate the SFS with ANGSD can be found [here](https://github.com/mfumagalli/WoodsHole/blob/master/Files/sfs.md).
@@ -340,10 +379,12 @@ $NGSADMIX -likes Results/ALL.beagle.gz -K $K -outfiles Results/ALL.admix.K$K -P 
 
 We now combine samples IDs with admixture proportions and inspect the results.
 ```
+K=4
 paste $DATA/ALL.bamlist Results/ALL.admix.K$K.qopt > Results/ALL.admix.K$K.txt
 less -S Results/ALL.admix.K$K.txt
 ```
 From these quantities we can extract how many samples (and which ones) have a high proportion of Native American ancestry (e.g. >0.90). 
+As you can see it did not work very well, as you need more data (unlinked SNPs) to correctly infer individual ancestry.
 
 ------------------
 
@@ -352,6 +393,8 @@ From these quantities we can extract how many samples (and which ones) have a hi
 #### Genetic distances
 
 **IMPORTANT NOTE**: These commands are given as a mere example as, in practise, such analyses should be performed on larger genomic regions.
+
+**IMPORTANT NOTE**: ngsDist is not installed on the server! Either you install it on your local machine or you just look at these command lines as examples.
 
 Genotype probabilities can be used also to infer the structure of your population.
 For instance, in our example, they can used to assess whether PEL samples are indeed admixed.
@@ -383,9 +426,9 @@ N_SITES=`zcat Results/ALL.mafs.gz | tail -n+2 | wc -l`
 echo $N_SITES
 ```
 
-Then we create a file with labels indicating the population of interest for each sample.
+Then we create a file with labels indicating the population of interest foir each sample.
 ```
-Rscript -e 'cat(paste(rep(c("LWK","TSI","CHB","NAM"),each=20), rep(1:20, 4), sep="_"), sep="\n", file="Data/pops.label")'
+$RSCRIPT -e 'cat(paste(rep(c("CHB","LWK","NAM","TSI"),each=20), rep(1:20, 4), sep="_"), sep="\n", file="Data/pops.label")'
 cat Data/pops.label
 ```
 
@@ -401,6 +444,9 @@ NGSDIST=$NGSTOOLS/ngsDist
 N_SITES=`zcat Results/ALL.mafs.gz | tail -n+2 | wc -l`
 
 $NGSDIST/ngsDist -verbose 1 -geno Results/ALL.geno.gz -probs -n_ind 80 -n_sites $N_SITES -labels Data/pops.label -o Results/ALL.dist -n_threads 4 &> /dev/null
+```
+Inspect the results.
+```
 less -S Results/ALL.dist
 ```
 
@@ -409,15 +455,16 @@ We can visualise the pairwise genetic distances in form of a tree.
 $FASTME -D 1 -i Results/ALL.dist -o Results/ALL.tree -m b -n b &> /dev/null
 cat Results/ALL.tree
 ```
-
 Finally, we plot the tree.
 ```
 Rscript -e 'library(ape); library(phangorn); pdf(file="Results/ALL.tree.pdf"); plot(read.tree("Results/ALL.tree"), cex=0.5); dev.off();' &> /dev/null
 ```
 Transfer the pdf plot to your local machine and open it:
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.tree.pdf Results/.
 open Results/ALL.tree.pdf
 ```
+Again, you can see that you need more data (unlinked SNPs) to infer genetic distances.
 
 One can also perform a PCA/MDS from such genetic distances to further explore the population structure.
 

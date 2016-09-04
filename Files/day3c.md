@@ -36,7 +36,12 @@ A simple R script to do that is here:
 ```
 #!/bin/bash
 
-Rscript $DIR/Scripts/getGenMap.R $DATA/genetic_map_chrom2.map $DATA/NAM.chr2.vcf > Results/genetic.map
+RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
+DIR=/truba/home/egitim/Ankara
+
+DATA=/truba/home/egitim/Data
+
+$RSCRIPT $DIR/Scripts/getGenMap.R $DATA/genetic_map_chrom2.map $DATA/NAM.chr2.vcf > Results/genetic.map
 ```
 
 Now we can run XP-EHH giving the resulting file as input.
@@ -46,6 +51,9 @@ This may take some time... choose one population and comment the other lines:
 
 # specify where the program is
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
 
 # NAM
 $SS/selscan --xpehh --vcf $DATA/NAM.chr2.vcf --vcf-ref $DATA/TSI.chr2.vcf --map Results/genetic.map --out Results/NAM --threads 1
@@ -204,9 +212,14 @@ First, we convert our VCF files into FASTA files.
 ```
 #!/bin/bash
 
+RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
+DIR=/truba/home/egitim/Ankara
+
+DATA=/truba/home/egitim/Data
+
 > Results/EDAR.fa
-Rscript $DIR/Scripts/vcf2fasta.R $DATA/NAM.edar.vcf NAM Results/NAM.edar.snp >> Results/EDAR.fa
-Rscript $DIR/Scripts/vcf2fasta.R $DATA/TSI.edar.vcf TSI NULL >> Results/EDAR.fa
+$RSCRIPT $DIR/Scripts/vcf2fasta.R $DATA/NAM.edar.vcf NAM Results/NAM.edar.snp >> Results/EDAR.fa
+$RSCRIPT $DIR/Scripts/vcf2fasta.R $DATA/TSI.edar.vcf TSI NULL >> Results/EDAR.fa
 ```
 Have a look at the resulting file:
 ```
@@ -214,7 +227,12 @@ less -S Results/EDAR.fa
 ```
 We are using [pegas](https://bioinformatics.oxfordjournals.org/content/26/3/419.full) package in R to draw haplotype network.
 ```
-Rscript $DIR/Scripts/plotNet.R Results/EDAR.fa Results/NAM.edar.snp Results/EDAR.pdf 2> /dev/null > Results/EDAR.diff
+#!/bin/bash
+
+RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
+DIR=/truba/home/egitim/Ankara
+
+$RSCRIPT $DIR/Scripts/plotNet.R Results/EDAR.fa Results/NAM.edar.snp Results/EDAR.pdf 2> /dev/null > Results/EDAR.diff
 ```
 Open the plot:
 ```
