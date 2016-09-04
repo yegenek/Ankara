@@ -34,12 +34,19 @@ However we need to extract only the sites that correspond in our VCF file.
 We also need to interpolate over the sites that are not recorded in our genetic map.
 A simple R script to do that is here:
 ```
+#!/bin/bash
+
 Rscript $DIR/Scripts/getGenMap.R $DATA/genetic_map_chrom2.map $DATA/NAM.chr2.vcf > Results/genetic.map
 ```
 
 Now we can run XP-EHH giving the resulting file as input.
-This may take some time...choose one population...
+This may take some time... choose one population and comment the other lines:
 ```
+#!/bin/sh
+
+# specify where the program is
+SS=/truba/home/egitim/bin/selscan-master/bin/linux
+
 # NAM
 $SS/selscan --xpehh --vcf $DATA/NAM.chr2.vcf --vcf-ref $DATA/TSI.chr2.vcf --map Results/genetic.map --out Results/NAM --threads 1
 # CHB
@@ -65,8 +72,14 @@ This can be achieved by the extra command `norm`:
 ```
 $SS/norm --help
 ```
-We normalise the results (knowing that this should be done genome-wide):
+We normalise the results (knowing that this should be done genome-wide).
+Again, you can choose only one population and comment the other lines:
 ```
+#!/bin/sh
+
+# specify where the program is
+SS=/truba/home/egitim/bin/selscan-master/bin/linux
+
 # NAM
 $SS/norm --xpehh --files Results/NAM.xpehh.out
 # CHB
@@ -87,19 +100,29 @@ less -S Results/CHB.xpehh.out.norm
 
 In order to perform a sliding window scan we can assign the maximum XP-EHH score to each window and plot it.
 Please note that here we are using unstandardised values as we are focusing on one small region.
+Again, you can choose one population and comment the other lines.
 ```
+#!/bin/bash
+
 # NAM
 Rscript $DIR/Scripts/plotXPEHH.R Results/NAM.xpehh.out.norm Results/NAM.xpehh.pdf
-evince Results/NAM.xpehh.pdf
+
 # CHB
 Rscript $DIR/Scripts/plotXPEHH.R Results/CHB.xpehh.out.norm Results/CHB.xpehh.pdf
-evince Results/CHB.xpehh.pdf
+
 # CLM
 Rscript $DIR/Scripts/plotXPEHH.R Results/CLM.xpehh.out.norm Results/CLM.xpehh.pdf
-evince Results/CLM.xpehh.pdf
+
 # LWK
 Rscript $DIR/Scripts/plotXPEHH.R Results/LWK.xpehh.out.norm Results/LWK.xpehh.pdf
-evince Results/LWK.xpehh.pdf
+```
+
+Open the resulting plot:
+```
+open Results/NAM.xpehh.pdf
+open Results/CHB.xpehh.pdf
+open Results/CLM.xpehh.pdf
+open Results/LWK.xpehh.pdf
 ```
 
 ----------------------------------------------------------
@@ -123,6 +146,10 @@ This is set with the option `--max-extend-nsl`.
 It is also common to filter out variant with very low frequency.
 Therefore our command line might be:
 ```
+#!/bin/bash
+
+SS=/truba/home/egitim/bin/selscan-master/bin/linux
+
 $SS/selscan --nsl --vcf $DATA/NAM.chr2.vcf --out Results/NAM --max-extend-nsl 200 --maf 0.02
 ```
 Have a look at the output file, knowning that the header is:
@@ -142,6 +169,10 @@ $SS/norm --help
 ```
 Thus, our command would be (note tha ihs and nsl normalisation are equivalent):
 ```
+#!/bin/bash
+
+SS=/truba/home/egitim/bin/selscan-master/bin/linux
+
 $SS/norm --ihs --files Results/NAM.nsl.out --bins 20
 ```
 The output file is called `Results/NAM.nsl.out.20bins.norm`.
@@ -171,6 +202,8 @@ Specifically, we want to draw a haplotype network, where all (unique) haplotypes
 
 First, we convert our VCF files into FASTA files.
 ```
+#!/bin/bash
+
 > Results/EDAR.fa
 Rscript $DIR/Scripts/vcf2fasta.R $DATA/NAM.edar.vcf NAM Results/NAM.edar.snp >> Results/EDAR.fa
 Rscript $DIR/Scripts/vcf2fasta.R $DATA/TSI.edar.vcf TSI NULL >> Results/EDAR.fa
@@ -185,7 +218,7 @@ Rscript $DIR/Scripts/plotNet.R Results/EDAR.fa Results/NAM.edar.snp Results/EDAR
 ```
 Open the plot:
 ```
-evince Results/EDAR.pdf
+open Results/EDAR.pdf
 ```
 Each unique haplotype is represented as a circle whose size is proportional to its frequency.
 
@@ -200,7 +233,5 @@ Another useful tool for visualising haplotypes is [PopArt](http://popart.otago.a
 ------------------------
 
 [HOME](https://github.com/mfumagalli/Ankara)
-
-
 
 

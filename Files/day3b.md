@@ -63,8 +63,13 @@ Then, divide this number by 4 times our reference Ne (7310).
 
 Thus, our command would be: `... -n 4 0.24 ... -ej 0.027 4 3`.
 
-Our complete command line is:
+Our complete command line is (copy and paste to a bash file):
 ```
+#!/bin/sh
+
+# specify where the program is
+MS=/truba/home/egitim/bin/msHOT/ms
+
 $MS 80 1000 -t 34 -r 22 50000 -I 4 20 20 20 20 -n 1 1.68 -n 2 3.73 -n 3 7.29 -n 4 0.25 -eg 0 2 116 -eg 0 3 160 -ma x 0.88 0.56 0.00 0.88 x 2.79 0.00 0.56 2.79 x 0.00 0.00 0.00 0.00 x -ej 0.027 4 3 -ej 0.029 3 2 -en 0.029 2 0.29 -en 0.30 1 1 > Results/ALL.ms
 rm seedms
 ```
@@ -79,8 +84,9 @@ From these simulations, we now need to calculate summary statistics.
 In other words, we want to retrieve the distribution of PBS under neutral evolution.
 We are then going to test whether our observed value falls within or outside such distribution.
 
-First, let us compute some summary statistics for each replication.
+First, let us compute some summary statistics for each replication (copy and paste to a bash file).
 ```
+#!/bin/sh
 Rscript $DIR/Scripts/ms2stats.R Results/ALL.ms > Results/ALL.ms.txt
 ```
 Have a look at the output file (and check how many lines we have):
@@ -97,7 +103,7 @@ Rscript $DIR/Scripts/plotSim.R Results/ALL.ms.txt $OBS Results/NAM.pbs.hist.pdf
 ```
 Inspect the plot:
 ```
-evince Results/NAM.pbs.hist.pdf
+open Results/NAM.pbs.hist.pdf
 ```
 
 Next we are going to investigate the patterns of haplotype diversity around the EDAR region from high-depth sequencing data.
@@ -105,7 +111,5 @@ Next we are going to investigate the patterns of haplotype diversity around the 
 ------------------------
 
 [HOME](https://github.com/mfumagalli/Ankara)
-
-
 
 

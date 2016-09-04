@@ -33,6 +33,11 @@ ANGSD does that automatically and considers only a set of overlapping sites.
 We are performing PBS assuming NAM (Native Americans) being the targeted population.
 The 2D-SFS between all populations and NAM are computed with:
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
 POP2=NAM
 for POP in LWK TSI CHB
 do
@@ -50,7 +55,10 @@ less -S Results/LWK.NAM.sfs
 You can plot it, but you need to define how many samples you have per population.
 ```
 Rscript $DIR/Scripts/plot2DSFS.R Results/LWK.NAM.sfs 20 20
-evince Results/LWK.NAM.sfs.pdf
+```
+Transfer it to your local machine:
+```
+open Results/LWK.NAM.sfs.pdf
 ```
 
 You can even estimate SFS with higher order of magnitude.
@@ -73,6 +81,11 @@ Therefore, we need to use the 2D-SFS between TSI and CHB and NAM (already done).
 
 If we also assume CHB being the target population, as a possible separate analysis is (you don't have to run this if not interested):
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
 POP2=CHB
 for POP in LWK TSI
 do
@@ -90,6 +103,11 @@ This can be achieved using the following commands.
 
 1) This command will compute per-site FST indexes (please note the order of files):
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
 # NAM
 $ANGSD/misc/realSFS fst index Results/LWK.saf.idx Results/TSI.saf.idx Results/NAM.saf.idx -sfs Results/LWK.TSI.sfs -sfs Results/LWK.NAM.sfs -sfs Results/TSI.NAM.sfs -fstout Results/NAM.pbs &> /dev/null
 # CHB
@@ -107,6 +125,11 @@ Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
 
 2) The next command will perform a sliding-window analysis:
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
 # NAM
 $ANGSD/misc/realSFS fst stats2 Results/NAM.pbs.fst.idx -win 50000 -step 10000 > Results/NAM.pbs.txt 2> /dev/null
 # CHB
@@ -141,11 +164,11 @@ It will also print out the maximum PBS value observed as this value will be used
 This script will also plot the PBS variation in LWK as a control comparison.
 ```
 # NAM
-evince Results/NAM.pbs.pdf
+open Results/NAM.pbs.pdf
 # CHB
-evince Results/CHB.pbs.pdf
+open Results/CHB.pbs.pdf
 ```
-Comment on the results.
+Comment the results.
 
 -------------------------
 
@@ -160,8 +183,19 @@ This can be achieved using the following pipeline.
 
 First we compute the allele frequency posterior probabilities and associated statistics (-doThetas) using the SFS as prior information (-pest)
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
+
+# specify the population label
 POP=CHB
-echo $POP
+
 $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -anc $ANC -out Results/$POP \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 	-minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
@@ -170,8 +204,18 @@ $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -anc $ANC -out Results/$POP \
 ```
 Then we need to index thess file and perform a sliding windows analysis using a window length of 50kbp and a step size of 10kbp.
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
+
 POP=CHB
-echo $POP
+
 # index files
 $ANGSD/misc/thetaStat make_bed Results/$POP.thetas.gz &> /dev/null
 # perform a sliding-window analysis
@@ -185,7 +229,9 @@ less -S Results/CHB.thetas.pestPG
 and plot the sliding windows scan for nucleotide diversity:
 ```
 Rscript $DIR/Scripts/plotSS.R
-evince Results/CHB.ss.pdf
+```
+```
+open Results/CHB.ss.pdf
 ```
 
 ------------------------
