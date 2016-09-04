@@ -5,21 +5,37 @@
 **IMPORTANT NOTE**: These commands are given as a mere example as, in practise, such analyses should be performed on larger genomic regions.
 
 We now want to investigate population structure of our sample. 
+As reference, these are the labelling for each population:
+
+- LWK: Africans
+- TSI: Europeans
+- CHB: East Asians
+- NAM: Native Americans
+
 We perform a principal component analyses (PCA) without relying on called genotypes, but rather by taking their uncertainty into account.
 More specifically, the next program we are going to use (ngsTools) takes as input genotype probabilities in binary format, so we need to specify `-doGeno 32` in ANGSD.
 Also, we are using a HWE-based prior with `-doPost 1`.
-
+Remember to copy and paste to a bash file.
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
 $ANGSD/angsd -b $DATA/ALL.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 40 -setMinDepth 70 -setMaxDepth 200 -doCounts 1 \
         -GL 1 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
         -SNP_pval 1e-2 \
         -doGeno 32 -doPost 1 &> /dev/null
-```
-Unzip the results but you cannot open it since it is in binary format:
-```
+
+# Unzip the results but you cannot open it since it is in binary format:
 gunzip Results/ALL.geno.gz
+
 ```
 We are going to use `ngsCovar`, which estimates the covariance matrix between individuals based on genotype probabilities.
 Then this matrix will be decomposed into principal componenets which will be investigated for population structure analyses.
@@ -39,9 +55,18 @@ How many sites do we have?
 N_SITES=`zcat Results/ALL.mafs.gz | tail -n+2 | wc -l`
 echo $N_SITES
 ```
-Now we can perform a PCA by estimating the covariance matrix using:
+Now we can perform a PCA by estimating the covariance matrix using the following command (remember to copy and paste to a bash file):
 ```
+#!/bin/sh
+
+# specify where the program is
+NGSTOOLS=/truba/home/egitim/bin/ngsTools
+
+# specify how many sites we have
+N_SITES=`zcat Results/ALL.mafs.gz | tail -n+2 | wc -l`
+
 $NGSTOOLS/ngsPopGen/ngsCovar -probfile Results/ALL.geno -outfile Results/ALL.covar -nind 80 -nsites $N_SITES -call 0 -norm 0 &> /dev/null
+
 ```
 with the options `-call 0` meaning that we do not perform genotype calling and `-norm 0` that we are not normalising by allele frequency.
 The latter may give more weight to low frequency variants which are harder to estimate.
@@ -64,15 +89,18 @@ where the parameter `1-2` specifies that we are plotting only the first and seco
 On the screen, you will see a series of numbers.
 These are the percentage of explained variance for each component.
 
-Finally, you can open the produced image:
+Finally, you can open the produced image (scp to your local machine first):
 ```
-evince Results/ALL.pca.pdf
+open Results/ALL.pca.pdf
 ```
 
 You can inspect other components:
 ```
 Rscript $DIR/Scripts/plotPCA_ngstools.R Results/ALL.covar Results/ALL.clst 2-3 Results/ALL.pca2.pdf
-evince Results/ALL.pca2.pdf
+```
+Transfer to your local machine and open it:
+```
+open Results/ALL.pca2.pdf
 ```
 
 Therefore, NAM samples appear very close to EUR but separated.
@@ -126,6 +154,15 @@ Also, we want to estimate the unfolded SFS and we use a putative ancestral seque
 
 We cycle across all populations and compute SAF files:
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
 for POP in LWK TSI CHB NAM
 do
         echo $POP
@@ -134,6 +171,7 @@ do
                 -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 15 -setMaxDepth 150 -doCounts 1 \
                 -GL 1 -doSaf 1 &> /dev/null
 done
+
 ```
 
 Have a look at the output file.
@@ -184,11 +222,21 @@ $ANGSD/misc/realSFS
 
 Therefore, this command will estimate the SFS for each population separately:
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
 for POP in LWK TSI CHB NAM
 do
         echo $POP
         $ANGSD/misc/realSFS Results/$POP.saf.idx 2> /dev/null > Results/$POP.sfs
 done
+
 ```
 The output will be saved in `Results/POP.sfs` files.
 
@@ -214,7 +262,10 @@ Nevertheless, these SFS should be a reasonable prior to be used for estimation o
 Let us plot the SFS for each pop using this simple R script.
 ```
 Rscript $DIR/Scripts/plotSFS.R Results/LWK.sfs Results/TSI.sfs Results/CHB.sfs Results/NAM.sfs
-evince Results/LWK_TSI_CHB_NAM.pdf
+```
+Transfer the pdf to your local machine and open it.
+```
+open Results/LWK_TSI_CHB_NAM.pdf
 ```
 
 Do they behave like expected?
@@ -229,6 +280,11 @@ It is sometimes convenient to generate bootstrapped replicates of the SFS, by sa
 This could be used for instance to get confidence intervals when using the SFS for demographic inferences.
 This can be achieved in ANGSD using:
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
 $ANGSD/misc/realSFS Results/NAM.saf.idx -bootstrap 10  2> /dev/null > Results/NAM.boots.sfs
 cat Results/NAM.boots.sfs
 ```
@@ -252,6 +308,15 @@ This is suitable for low-depth data.
 ngsAdmix requires genotype likelihoods in BEAGLE format as input.
 We can compute these quantities with ANGSD with `-doGlf 2`.
 ```
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
 $ANGSD/angsd -b $DATA/ALL.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 40 -setMinDepth 50 -setMaxDepth 200 -doCounts 1 \
@@ -263,6 +328,12 @@ $ANGSD/angsd -b $DATA/ALL.bamlist -ref $REF -out Results/ALL \
 We assume 4 ancestral populations making up the genetic diversity of our samples.
 Therefore we compute admixture proportions with 4 ancestral components.
 ```
+#!/bin/sh
+
+# specify where the program is
+NGSADMIX=/truba/home/egitim/bin/NGSadmix
+
+# specify the number of ancestral populations
 K=4
 $NGSADMIX -likes Results/ALL.beagle.gz -K $K -outfiles Results/ALL.admix.K$K -P 4 -minMaf 0.02 &> /dev/null
 ```
@@ -287,9 +358,17 @@ For instance, in our example, they can used to assess whether PEL samples are in
 
 We can compute genetic distances as a basis for population clustering driectly from genotype probabilities, and not from assigned genotypes as we have seen how problematic these latters can be at low-depth.
 
-First, we compute genotype posterior probabilities jointly for all samples:
+First, we compute genotype posterior probabilities jointly for all samples (assuming HWE, without filtering based on probabilities, with SNP calling):
 ```
-# Assuming HWE, without filtering based on probabilities, with SNP calling
+#!/bin/sh
+
+# specify where the program is
+ANGSD=/truba/home/egitim/bin/angsd
+
+# specify where the data is
+DATA=/truba/home/egitim/Data
+REF=$DATA/ref.fa.gz
+
 $ANGSD/angsd -b $DATA/ALL.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 40 -setMinDepth 50 -setMaxDepth 200 -doCounts 1 \
@@ -312,6 +391,15 @@ cat Data/pops.label
 
 With [ngsDist](https://github.com/fgvieira/ngsDist) we can compute pairwise genetic distances without relying on individual genotype calls.
 ```
+#!/bin/sh
+
+# specify where the program is
+NGSTOOLS=/truba/home/egitim/bin/ngsTools
+NGSDIST=$NGSTOOLS/ngsDist
+
+# how many sites we have
+N_SITES=`zcat Results/ALL.mafs.gz | tail -n+2 | wc -l`
+
 $NGSDIST/ngsDist -verbose 1 -geno Results/ALL.geno.gz -probs -n_ind 80 -n_sites $N_SITES -labels Data/pops.label -o Results/ALL.dist -n_threads 4 &> /dev/null
 less -S Results/ALL.dist
 ```
@@ -325,7 +413,10 @@ cat Results/ALL.tree
 Finally, we plot the tree.
 ```
 Rscript -e 'library(ape); library(phangorn); pdf(file="Results/ALL.tree.pdf"); plot(read.tree("Results/ALL.tree"), cex=0.5); dev.off();' &> /dev/null
-evince Results/ALL.tree.pdf
+```
+Transfer the pdf plot to your local machine and open it:
+```
+open Results/ALL.tree.pdf
 ```
 
 One can also perform a PCA/MDS from such genetic distances to further explore the population structure.
