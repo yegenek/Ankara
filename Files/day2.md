@@ -112,7 +112,7 @@ These are the percentage of explained variance for each component.
 
 Finally, you can open the produced image (scp to your local machine first):
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.pca.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/ALL.pca.pdf Results/.
 open Results/ALL.pca.pdf
 ```
 
@@ -122,7 +122,7 @@ $RSCRIPT $DIR/Scripts/plotPCA_ngstools.R Results/ALL.covar Results/ALL.clst 2-3 
 ```
 Transfer to your local machine and open it:
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.pca2.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/ALL.pca2.pdf Results/.
 open Results/ALL.pca2.pdf
 ```
 
@@ -179,7 +179,7 @@ $RSCRIPT $DIR/Scripts/plotPCA_ngstools.R Results/ALL2.covar Results/ALL.clst 1-2
 ```
 Finally, you can open the produced image (scp to your local machine first):
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL2.pca.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/ALL2.pca.pdf Results/.
 open Results/ALL2.pca.pdf
 ```
 
@@ -353,7 +353,7 @@ $RSCRIPT $DIR/Scripts/plotSFS.R Results/LWK.sfs Results/TSI.sfs Results/CHB.sfs 
 ```
 Transfer the pdf to your local machine and open it.
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/LWK_TSI_CHB_NAM.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/LWK_TSI_CHB_NAM.pdf Results/.
 open Results/LWK_TSI_CHB_NAM.pdf
 ```
 
@@ -561,7 +561,7 @@ Rscript -e 'library(ape); library(phangorn); pdf(file="Results/ALL.tree.pdf"); p
 ```
 Transfer the pdf plot to your local machine and open it:
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.tree.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/ALL.tree.pdf Results/.
 open Results/ALL.tree.pdf
 ```
 Again, you can see that you need more data (unlinked SNPs) to infer genetic distances.

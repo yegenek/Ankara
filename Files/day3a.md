@@ -69,7 +69,7 @@ $RSCRIPT $DIR/Scripts/plot2DSFS.R Results/LWK.NAM.sfs 20 20
 ```
 Transfer it to your local machine:
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/LWK.NAM.sfs.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/LWK.NAM.sfs.pdf Results/.
 open Results/LWK.NAM.sfs.pdf
 ```
 
@@ -163,7 +163,7 @@ Rscript $DIR/Scripts/plotPBS.R Results/NAM.pbs.txt Results/NAM.pbs.pdf
 It will also print out the maximum PBS value observed as this value will be used in the next part.
 This script will also plot the PBS variation in LWK as a control comparison.
 ```
-scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/NAM.pbs.pdf Results/.
+scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/NAM.pbs.pdf Results/.
 open Results/NAM.pbs.pdf
 ```
 
@@ -228,7 +228,7 @@ $RSCRIPT $DIR/Scripts/plotPBS.R Results/CHB.pbs.txt Results/CHB.pbs.pdf
 ```
 Open:
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/CHB.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/CHB.pdf Results/.
 open Results/CHB.pdf
 ```
 

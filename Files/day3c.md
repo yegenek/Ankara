@@ -316,6 +316,7 @@ $RSCRIPT $DIR/Scripts/plotNet.R Results/EDAR.fa Results/NAM.edar.snp Results/EDA
 ```
 Open the plot:
 ```
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/EDAR.pdf Results/.
 open Results/EDAR.pdf
 ```
 Each unique haplotype is represented as a circle whose size is proportional to its frequency.

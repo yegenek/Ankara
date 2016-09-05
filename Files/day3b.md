@@ -128,7 +128,7 @@ $RSCRIPT $DIR/Scripts/plotSim.R Results/ALL.ms.txt $OBS Results/NAM.pbs.hist.pdf
 ```
 Inspect the plot:
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/NAM.pbs.hist.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/NAM.pbs.hist.pdf Results/.
 open Results/NAM.pbs.hist.pdf
 ```
 

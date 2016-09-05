@@ -145,7 +145,7 @@ To make things faster, we are using only 20 samples from European samples (TSI, 
 **IMPORTANT NOTE**
 Be aware that you need to create a bash file to run long commands.
 You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`), by adding an appropriate header and then run it like `sh tmp.sh`.
-Moreover, when you create a PDF file on the cluster and want to open it, you have to transfer it to your local machine. For instance, from your local machine you should type something like `scp /truba/home/egitim/Students/Student1/Ex/Results/tmp.pdf .` and then you can open it by clicking on it or by typing `open tmp.pdf`. 
+Moreover, when you create a PDF file on the cluster and want to open it, you have to transfer it to your local machine. For instance, from your local machine you should type something like `scp /truba/home/egitim/mehmet/Ex/Results/tmp.pdf .` and then you can open it by clicking on it or by typing `open tmp.pdf`. 
 
 We first derive the distribution of quality scores and depth on our data set using ```-doQsDist 1 -doDepth 1```.
 Copy and paste this command into a bash file (e.g. `tmp.sh`) and follow the instructions previously reported.
@@ -215,8 +215,9 @@ less -S Results/ALL.qc.info
 If you want to open the PDF plot, transfer it (via scp) on your local machine.
 For instance, from your local machine, you can use:
 ```
+# FROM YOUR LOCAL MACHINE!
 mkdir Results
-scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/ALL.qc.pdf Results/.
+scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/ALL.qc.pdf Results/.
 open Results/ALL.qc.pdf
 ``` 
 
@@ -536,7 +537,7 @@ $RSCRIPT -e 'mafs1=read.table(gzfile("Results/ALL.1e-2.mafs.gz"), he=T, strings=
 
 Look at the resulting plot (scp to your local machine):
 ```
-# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/Ex/Results/diff_snpcall.pdf Results/.
+# scp egitim@levrek1.ulakbim.gov.tr:/truba/home/egitim/matteo/Ex/Results/diff_snpcall.pdf Results/.
 open Results/diff_snpcall.pdf
 ```
 
