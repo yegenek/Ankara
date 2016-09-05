@@ -741,13 +741,12 @@ REF=$DATA/ref.fa.gz
 # specify the population label
 POP=PEL
 
-$ANGSD/angsd -b $DATA/$POP.bamlist -ref $POP -out Results/PEL \
+$ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/$POP \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 	-minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
 	-GL 1 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
 	-SNP_pval 1e-3 \
 	-doGeno 3 -doPost 1 -postCutoff 0.95 &> /dev/null
-
 ```
 
 How many sites do we have in total?
@@ -771,6 +770,14 @@ We will show later how to accurately estimate summary statistics with low-depth 
 
 Back to our example of functional variants in EDAR, we want to assign individual genotypes by first computing genotype posterior probabilities for all samples.
 Finally we will calculate allele frequencies based on assigned genotypes.
+
+If not already done, you need to index a file giving the genomic coordinates of your sites of interest.
+In ANGSD we can restrict our analyses on a subset of positions of interest using the `-sites` option.
+The file with these positions need to be formatted as (chromosome positions).
+```
+echo 2 109513601 > snp.txt
+$ANGSD/angsd sites index snp.txt &> /dev/null
+```
 
 As previously done, let us perform a genotype calling in ANGSD (remember to copy and paste it into a bash file):
 ```
@@ -804,9 +811,9 @@ do
 		-doGeno 3 -doPost 2 -postCutoff 0.50 \
                 -sites snp.txt &> /dev/null
 done
-
 ```
 Note that, as an illustration, here we used a uniform prior (not HWE) with `-doPost 2` with a threshold for setting missing genotypes to 0.50.
+This command may take some time, be patient...
 
 Open the output files:
 ```
@@ -820,8 +827,9 @@ done
 What is the derived allele frequency for each population?
 
 We have a lot of missing data.
-Try to calculate allele frequencies in PEL by using a HWE-prior and comment on the results (e.g. which are the genotypic states more difficult to assign?).
-We assume a HWE-based prior (copy and paste to a bash file):
+We now calculate allele frequencies in PEL by using a HWE-prior and comment on the results (e.g. which are the genotypic states more difficult to assign?).
+You can also specify `-doGeno 19` which gives you the posterior probability of the called genotypes.
+If we assume a HWE-based prior, the command is (copy and paste to a bash file):
 ```
 #!/bin/sh
 
@@ -841,6 +849,7 @@ ANGSD=/truba/home/egitim/bin/angsd
 # specify where the data is
 DATA=/truba/home/egitim/Data
 REF=$DATA/ref.fa.gz
+ANC=$DATA/anc.fa.gz
 
 for POP in LWK TSI CHB NAM PEL
 do
@@ -849,7 +858,7 @@ do
                 -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
                 -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
                 -GL 1 -doMajorMinor 5 -doMaf 1 -skipTriallelic 1 \
-                -doGeno 3 -doPost 1 -postCutoff 0.50 \
+                -doGeno 19 -doPost 1 -postCutoff 0.50 \
                 -sites snp.txt &> /dev/null
 done
 
@@ -863,11 +872,15 @@ do
         zcat Results/$POP.geno.gz
 done
 ```
-
 For instance, you may have 0/40 in LWK and TSI, 40/40 in CHB, and 14/20=0.70 in PEL.
-Recall that we previously estimated a minor allele frequency of 0.55 in PEL without assigning individual genotypes.
+
+Which are the genotypes which are more difficult to assign?
+
+Recall (or trust me if not already done) that we previously estimated a minor allele frequency of 0.55 in PEL without assigning individual genotypes.
 
 Why do we observe such a difference in the estimates?
+
+How about the difference in estimates between NAM and PEL?
 
 ----------------------------
 
