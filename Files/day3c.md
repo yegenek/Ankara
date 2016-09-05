@@ -36,6 +36,16 @@ A simple R script to do that is here:
 ```
 #!/bin/bash
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
 DIR=/truba/home/egitim/Ankara
 
@@ -48,6 +58,16 @@ Now we can run XP-EHH giving the resulting file as input.
 This may take some time... choose one population and comment the other lines:
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
@@ -85,6 +105,16 @@ Again, you can choose only one population and comment the other lines:
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
 
@@ -111,6 +141,16 @@ Please note that here we are using unstandardised values as we are focusing on o
 Again, you can choose one population and comment the other lines.
 ```
 #!/bin/bash
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # NAM
 Rscript $DIR/Scripts/plotXPEHH.R Results/NAM.xpehh.out.norm Results/NAM.xpehh.pdf
@@ -156,6 +196,16 @@ Therefore our command line might be:
 ```
 #!/bin/bash
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
 
 $SS/selscan --nsl --vcf $DATA/NAM.chr2.vcf --out Results/NAM --max-extend-nsl 200 --maf 0.02
@@ -179,6 +229,16 @@ Thus, our command would be (note tha ihs and nsl normalisation are equivalent):
 ```
 #!/bin/bash
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 SS=/truba/home/egitim/bin/selscan-master/bin/linux
 
 $SS/norm --ihs --files Results/NAM.nsl.out --bins 20
@@ -192,8 +252,8 @@ Please note that, again, we should perform the normalization on genome-wide data
 One strategy to plot such statistic is to record the number of SNPs above a certain threshold, e.g. |nSL|>2.
 We can do this using the following script:
 ```
-Rscript $DIR/Scripts/plotnSL.R Results/NAM.nsl.out.20bins.norm Results/NAM.nsl.pdf
-evince Results/NAM.nsl.pdf
+$RSCRIPT $DIR/Scripts/plotnSL.R Results/NAM.nsl.out.20bins.norm Results/NAM.nsl.pdf
+open Results/NAM.nsl.pdf
 ```
 
 What is happening here? What is wrong?
@@ -212,6 +272,16 @@ First, we convert our VCF files into FASTA files.
 ```
 #!/bin/bash
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
 DIR=/truba/home/egitim/Ankara
 
@@ -228,6 +298,16 @@ less -S Results/EDAR.fa
 We are using [pegas](https://bioinformatics.oxfordjournals.org/content/26/3/419.full) package in R to draw haplotype network.
 ```
 #!/bin/bash
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
 DIR=/truba/home/egitim/Ankara

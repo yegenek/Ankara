@@ -19,6 +19,16 @@ Remember to copy and paste to a bash file.
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -58,6 +68,16 @@ echo $N_SITES
 Now we can perform a PCA by estimating the covariance matrix using the following command (remember to copy and paste to a bash file):
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 NGSTOOLS=/truba/home/egitim/bin/ngsTools
@@ -118,6 +138,16 @@ As an extreme example, here we do not assume HWE, we standardise for genetic dri
 
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
@@ -197,6 +227,16 @@ We cycle across all populations and compute SAF files:
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -266,6 +306,16 @@ Therefore, this command will estimate the SFS for each population separately:
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -321,6 +371,16 @@ This can be achieved in ANGSD using:
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -349,6 +409,16 @@ We can compute these quantities with ANGSD with `-doGlf 2`.
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -368,6 +438,16 @@ We assume 4 ancestral populations making up the genetic diversity of our samples
 Therefore we compute admixture proportions with 4 ancestral components.
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 NGSADMIX=/truba/home/egitim/bin/NGSadmix
@@ -405,6 +485,16 @@ First, we compute genotype posterior probabilities jointly for all samples (assu
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -435,6 +525,16 @@ cat Data/pops.label
 With [ngsDist](https://github.com/fgvieira/ngsDist) we can compute pairwise genetic distances without relying on individual genotype calls.
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 NGSTOOLS=/truba/home/egitim/bin/ngsTools

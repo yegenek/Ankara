@@ -144,13 +144,23 @@ To make things faster, we are using only 20 samples from European samples (TSI, 
 
 **IMPORTANT NOTE**
 Be aware that you need to create a bash file to run long commands.
-You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`) and then run it like `#SBATCH --reservasyon=egitim tmp.sh`.
+You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`), by adding an appropriate header and then run it like `sh tmp.sh`.
 Moreover, when you create a PDF file on the cluster and want to open it, you have to transfer it to your local machine. For instance, from your local machine you should type something like `scp /truba/home/egitim/Students/Student1/Ex/Results/tmp.pdf .` and then you can open it by clicking on it or by typing `open tmp.pdf`. 
 
 We first derive the distribution of quality scores and depth on our data set using ```-doQsDist 1 -doDepth 1```.
 Copy and paste this command into a bash file (e.g. `tmp.sh`) and follow the instructions previously reported.
 ```
 #!/bin/sh
+
+#SBATCH -M truba 
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00 
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
@@ -321,6 +331,16 @@ Therefore a possible command line to estimate allele frequencies might be (remem
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -397,6 +417,16 @@ Here is the solution (again copy-and-paste on a bash file):
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -451,6 +481,16 @@ Identify which sites are not predicted to be variable anymore with a more string
 You can change these cutoffs but remeber to copy and paste it on a bash file.
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
@@ -540,6 +580,16 @@ Again, copy and paste this command on a bash file.
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -625,6 +675,16 @@ Again copy-and-paste on a bash file.
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -660,6 +720,16 @@ You can control how to set missing genotype when their confidence is low with `-
 For instance, we can set as missing genotypes when their (highest) genotype posterior probability is below 0.95:
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
@@ -706,6 +776,16 @@ As previously done, let us perform a genotype calling in ANGSD (remember to copy
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -744,6 +824,16 @@ Try to calculate allele frequencies in PEL by using a HWE-prior and comment on t
 We assume a HWE-based prior (copy and paste to a bash file):
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd

@@ -35,6 +35,16 @@ The 2D-SFS between all populations and NAM are computed with:
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -91,6 +101,16 @@ This can be achieved using the following commands.
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -105,6 +125,16 @@ Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
 2) The next command will perform a sliding-window analysis:
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
@@ -147,6 +177,16 @@ Calculate PBS assuming CHB being the target population.
 
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
@@ -207,6 +247,16 @@ First we compute the allele frequency posterior probabilities and associated sta
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd
 
@@ -227,6 +277,16 @@ $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -anc $ANC -out Results/$POP \
 Then we need to index thess file and perform a sliding windows analysis using a window length of 50kbp and a step size of 10kbp.
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 ANGSD=/truba/home/egitim/bin/angsd

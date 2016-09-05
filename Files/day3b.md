@@ -67,6 +67,16 @@ Our complete command line is (copy and paste to a bash file):
 ```
 #!/bin/sh
 
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
+
 # specify where the program is
 MS=/truba/home/egitim/bin/msHOT/ms
 
@@ -87,6 +97,16 @@ We are then going to test whether our observed value falls within or outside suc
 First, let us compute some summary statistics for each replication (copy and paste to a bash file).
 ```
 #!/bin/sh
+
+#SBATCH -M truba
+#SBATCH -p single
+#SBATCH -J egitim-test
+#SBATCH --res=egitim
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=12:00:00
+
+export OMP_NUM_THREADS=1
 
 # specify where the program is
 RSCRIPT=/truba/home/egitim/bin/R-3.2.2/bin/Rscript
