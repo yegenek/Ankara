@@ -60,10 +60,55 @@ calcGenoLogLike2_MajorMinor(myReads, mySite, 1, 4)
 - AT:  -6.9514 
 - TT: -30.6037 
 
+--------------------
+
+Allele frequencies
+
+```
+myReads = Reads("AAATAAC" , "555-43(");
+
+haploid=calcGenoLogLike1(myReads, mySite)
+
+(major, minor, minor2, minor3) = sortperm(haploid, rev=true)
+
+freqsMLE = optimFreq_MajorMinor_GSS(myReads, major, minor, 1e-5)
+
+maf = 0.0;
+like_H0 = calcFreqLogLike1_MajorMinor(myReads, major, minor, maf)
+
+like_H1 = freqsMLE[1]
+
+lrtSnp = snpPval_MajorMinor(myReads, freqsMLE[1], major, minor)
+
+```
+
+- H0: -6.630932301040746
+- H1: -5.420818481979177
+- LRT: 2.420227638123137
+- f_MLE: 0.14818398119374376
 
 
+```
+myReads = Reads("AAATAACAATT" , "555-43(8822");
 
+haploid=calcGenoLogLike1(myReads, mySite)
 
+(major, minor, minor2, minor3) = sortperm(haploid, rev=true)
+
+freqsMLE = optimFreq_MajorMinor_GSS(myReads, major, minor, 1e-5)
+maf = 0.0;
+like_H0 = calcFreqLogLike1_MajorMinor(myReads, major, minor, maf)
+
+like_H1 = freqsMLE[1]
+
+lrtSnp = snpPval_MajorMinor(myReads, freqsMLE[1], major, minor)
+
+```
+
+- H0: -16.66699514233869
+- H1: -8.899773700369137
+- LRT: 15.534442883939104
+- f_MLE: 0.29257488372333595
 
 
 
