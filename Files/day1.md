@@ -144,7 +144,7 @@ To make things faster, we are using only 20 samples from European samples (TSI, 
 
 **IMPORTANT NOTE**
 Be aware that you need to create a bash file to run long commands.
-You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`), by adding an appropriate header and then run it like `sh tmp.sh`.
+You can do that by copy-and-paste the command line into a file (e.g. `tmp.sh`), by adding an appropriate header and then run it like `sbatch tmp.sh`.
 Moreover, when you create a PDF file on the cluster and want to open it, you have to transfer it to your local machine. For instance, from your local machine you should type something like `scp /truba/home/egitim/mehmet/Ex/Results/tmp.pdf .` and then you can open it by clicking on it or by typing `open tmp.pdf`. 
 
 We first derive the distribution of quality scores and depth on our data set using ```-doQsDist 1 -doDepth 1```.
@@ -175,10 +175,13 @@ POP=TSI # change it if you wish so
 $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL.qc \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -doQsDist 1 -doDepth 1 -doCounts 1 -maxDepth 200 -minQ 0 &> /dev/null
+
+exit
+
 ```
 and then run it like:
 ```
-sh tmp.sh
+sbatch tmp.sh
 ```
 As an illustration here, ```-maxDepth 200``` corresponds to a per-sample average depth of 10.
 This option means that all sites with depth equal or greater than 200 will be binned together.
@@ -356,6 +359,8 @@ $ANGSD/angsd -b $DATA/$POP.bamlist -ref $REF -out Results/ALL \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
         -minMapQ 20 -minQ 20 -minInd 10 -setMinDepth 10 -setMaxDepth 100 -doCounts 1 \
         -GL 1 -doMajorMinor 4 -doMaf 1 -skipTriallelic 1 &> /dev/null
+
+exit
 
 ```
 where we specify:
